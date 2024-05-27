@@ -44,26 +44,28 @@ public class Ball {
 		this.width = width;
 		this.height = height;
 		this.color = color;
-		this.speed = speed;
-		this.auxX = vetorNormalizado();
-		this.auxY = vetorNormalizado();
+		this.speed = speed;		
+		this.auxX = vetorAleatorio();
+		this.auxY = vetorAleatorio();
+
+		normalizaVetor();
 	}
 
-	private boolean randomDirection(){
+	private void normalizaVetor() {
+		double norma = (Math.sqrt((Math.pow(this.auxX, 2) + Math.pow(this.auxY, 2))));
+
+		this.auxX = this.auxX / norma;
+		this.auxY = this.auxY / norma;
+	}
+
+	private double vetorAleatorio(){
 		Random random = new Random();
-		boolean aleatorio = random.nextBoolean();
-
-		return aleatorio;
-	}
-
-	private double vetorNormalizado(){
-		double vetor;
-		if (randomDirection() == false){
-			vetor = 1;
+	
+		if (random.nextBoolean()){
+			return 1;
 		} else {
-			vetor = -1;
+			return -1;
 		}
-		return (vetor/Math.sqrt(2));
 	}
 
 	/**
@@ -82,8 +84,8 @@ public class Ball {
 	*/
 
 	public void update(long delta){
-		this.cx += this.speed*this.auxX*delta;
-		this.cy += this.speed*this.auxY*delta;
+		this.cx += (this.speed*this.auxX*delta);
+		this.cy += (this.speed*this.auxY*delta);
 	}
 
 	/**
@@ -93,14 +95,14 @@ public class Ball {
 	*/
 
 	public void onPlayerCollision(String playerId){
-			if(playerId.equals("Player 1") && this.auxX == 1/Math.sqrt(2)){
+			if(playerId.equals("Player 1") && this.auxX > 0){
 				return;
 			}
 
-			if(playerId.equals("Player 2") && this.auxX == -1/Math.sqrt(2)){
+			if(playerId.equals("Player 2") && this.auxX < 0){
 				return;
 			}
-
+			
 			this.auxX *= -1;
 		}
 
@@ -130,25 +132,25 @@ public class Ball {
 	public boolean checkCollision(Wall wall){
 		String posWall = wall.getId();
 
-		if(posWall.equals("Bottom")){
+		if(posWall.equals("Bottom") && this.auxY > 0){
 			if(this.cy + (this.height / 2) > wall.getCy() - (wall.getHeight() / 2)){
 				return true;
 			}
 		}
 
-		else if(posWall.equals("Top")){
+		else if(posWall.equals("Top") && this.auxY < 0){
 			if(this.cy - (this.height / 2) < wall.getCy() + (wall.getHeight() / 2)){
 				return true;
 			}
 		}
 
-		if(posWall.equals("Right")){
-			if(this.cx + (this.width / 2) > wall.getCx() + (wall.getWidth() / 2)){
+		if(posWall.equals("Right") && this.auxX > 0){
+			if(this.cx + (this.width / 2) > wall.getCx() - (wall.getWidth() / 2)){
 				return true;
 			}
 		}
 			
-		if(posWall.equals("Left")){
+		if(posWall.equals("Left")  && this.auxX < 0){
 			if(this.cx - (this.width / 2) < wall.getCx() + (wall.getWidth() / 2)){
 				return true;
 			}
