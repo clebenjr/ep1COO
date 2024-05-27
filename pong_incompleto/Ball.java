@@ -1,11 +1,10 @@
 import java.awt.*;
-// java.util.Random
+import java.lang.Math; 
+import java.util.Random;
+
 /**
 	Esta classe representa a bola usada no jogo. A classe princial do jogo (Pong)
 	instancia um objeto deste tipo quando a execução é iniciada.
-
-	O luis falou que não precisa reiniciar a bolinha toda vez
-	a bolinha continua, não reinicia
 */
 
 public class Ball {
@@ -18,8 +17,6 @@ public class Ball {
 	private double speed;
 	private double auxX;
 	private double auxY;
-	private final double CX_INICIAL;
-	private final double CY_INICIAL;
 
 	/**
 		Construtor da classe Ball. Observe que quem invoca o construtor desta classe define a velocidade da bola 
@@ -48,12 +45,26 @@ public class Ball {
 		this.height = height;
 		this.color = color;
 		this.speed = speed;
-		this.auxX = 1;
-		this.auxY = 1;
-		this.CX_INICIAL = cx;
-		this.CY_INICIAL = cy;
+		this.auxX = vetorNormalizado();
+		this.auxY = vetorNormalizado();
 	}
 
+	private boolean randomDirection(){
+		Random random = new Random();
+		boolean aleatorio = random.nextBoolean();
+
+		return aleatorio;
+	}
+
+	private double vetorNormalizado(){
+		double vetor;
+		if (randomDirection() == false){
+			vetor = 1;
+		} else {
+			vetor = -1;
+		}
+		return (vetor/Math.sqrt(2));
+	}
 
 	/**
 		Método chamado sempre que a bola precisa ser (re)desenhada.
@@ -82,6 +93,14 @@ public class Ball {
 	*/
 
 	public void onPlayerCollision(String playerId){
+			if(playerId.equals("Player 1") && this.auxX == 1/Math.sqrt(2)){
+				return;
+			}
+
+			if(playerId.equals("Player 2") && this.auxX == -1/Math.sqrt(2)){
+				return;
+			}
+
 			this.auxX *= -1;
 		}
 
@@ -97,8 +116,7 @@ public class Ball {
 		}
 
 		 if(wallId.equals("Right") ||wallId.equals("Left")){
-			this.cx = CX_INICIAL;
-			this.cy = CY_INICIAL;
+			this.auxX *= -1;
 		}
 	}
 
